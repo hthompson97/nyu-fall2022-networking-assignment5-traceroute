@@ -47,7 +47,7 @@ def build_packet():
     #type = ICMP_ECHO_REQUEST = 8
     req_code = 0
     temp_checksum = 0
-    id = 0
+    id = os.getpid() & 0xFFFF
     seq = 1
 
     header = struct.pack("bbHHh",ICMP_ECHO_REQUEST,req_code,temp_checksum, id, seq)
@@ -55,6 +55,12 @@ def build_packet():
     # Append checksum to the header.
     data = struct.pack("d",time.time())
     myChecksum = checksum(header+data)
+    #from TA session
+    if sys.platform == 'darwin':
+        myChecksum = htons(myChecksum) & 0xffff
+    else:
+        myChecksum = htons(myChecksum)
+
     header = struct.pack("bbHHh",ICMP_ECHO_REQUEST,req_code,myChecksum, id, seq)
     # Don’t send the packet yet , just return the final packet in this function.
     #Fill in end
@@ -67,10 +73,11 @@ def get_route(hostname):
     timeLeft = TIMEOUT
     tracelist1 = [] #This is your list to use when iterating through each trace
     tracelist2 = [] #This is your list to contain all traces
+    destAddr = gethostbyname(hostname)
 
     for ttl in range(1,MAX_HOPS):
         for tries in range(TRIES):
-            destAddr = gethostbyname(hostname)
+
 
             #Fill in start
             #clear contents of tracelist1 on each loop
@@ -95,6 +102,7 @@ def get_route(hostname):
                     #You should add the list above to your all traces list
                     tracelist2.append(tracelist1)
                     #Fill in end
+
                 recvPacket, addr = mySocket.recvfrom(1024)
                 timeReceived = time.time()
                 timeLeft = timeLeft - howLongInSelect
@@ -115,7 +123,7 @@ def get_route(hostname):
                 #Fill in end
                 try: #try to fetch the hostname
                     #Fill in start
-                    recvaddr = gethostbyname(addr[0]) #hostname?? keeps returning ip...
+                    recvaddr = gethostbyaddr(addr[0])[0]
                     #Fill in end
                 except herror:   #if the host does not provide a hostname
                     #Fill in start
@@ -131,7 +139,6 @@ def get_route(hostname):
 
                     tracelist1.append("  %d    rtt=%.0f ms    %s %s" %(ttl, (timeReceived -t)*1000, addr[0], "hostname not returnable"))
                     #“hostname not returnable”.
-                    #return here?
                     #Fill in end
 
                 if types == 11: #time exceeded
