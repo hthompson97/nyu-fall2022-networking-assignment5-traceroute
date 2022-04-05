@@ -123,7 +123,10 @@ def get_route(hostname):
                 #Fill in end
                 try: #try to fetch the hostname
                     #Fill in start
+                    print(addr[0])
+                    print(gethostbyaddr(addr[0]))
                     recvaddr = gethostbyaddr(addr[0])[0]
+
                     #Fill in end
                 except herror:   #if the host does not provide a hostname
                     #Fill in start
@@ -139,6 +142,9 @@ def get_route(hostname):
 
                     tracelist1.append("  %d    rtt=%.0f ms    %s %s" %(ttl, (timeReceived -t)*1000, addr[0], "hostname not returnable"))
                     #“hostname not returnable”.
+                    #return here?
+                    tracelist2.append(tracelist1)
+                    return tracelist2
                     #Fill in end
 
                 if types == 11: #time exceeded
@@ -191,5 +197,6 @@ def get_route(hostname):
                 mySocket.close()
 
 if __name__ == '__main__':
-    get_route("www.google.com")
+    get_route("gmail.com")
+    #get_route("www.google.com")
     #get_route("google.co.il")
