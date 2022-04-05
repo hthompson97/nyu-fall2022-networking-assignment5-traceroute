@@ -115,12 +115,7 @@ def get_route(hostname):
                 #Fill in end
                 try: #try to fetch the hostname
                     #Fill in start
-                    #got at top already?
-                    recvaddr = gethostbyname(addr[0]) #hostname??
-                    ############################################TO REMOVE############################################
-                    print(recvaddr)
-                    ############################################TO REMOVE############################################
-
+                    recvaddr = gethostbyname(addr[0]) #hostname?? keeps returning ip...
                     #Fill in end
                 except herror:   #if the host does not provide a hostname
                     #Fill in start
@@ -136,9 +131,10 @@ def get_route(hostname):
 
                     tracelist1.append("  %d    rtt=%.0f ms    %s %s" %(ttl, (timeReceived -t)*1000, addr[0], "hostname not returnable"))
                     #“hostname not returnable”.
+                    #return here?
                     #Fill in end
 
-                if types == 11:
+                if types == 11: #time exceeded
                     bytes = struct.calcsize("d")
                     timeSent = struct.unpack("d", recvPacket[28:28 + bytes])[0]
                     #Fill in start
@@ -150,7 +146,7 @@ def get_route(hostname):
 
                     tracelist1.append("  %d    %.0f ms    %s %s" %(ttl, (timeReceived -t)*1000, addr[0], recvaddr))
                     #Fill in end
-                elif types == 3:
+                elif types == 3:#unreachable
                     bytes = struct.calcsize("d")
                     timeSent = struct.unpack("d", recvPacket[28:28 + bytes])[0]
                     #Fill in start
@@ -162,7 +158,7 @@ def get_route(hostname):
                     ############################################TO REMOVE############################################
 
                     #Fill in end
-                elif types == 0:
+                elif types == 0: #echo reply
                     bytes = struct.calcsize("d")
                     timeSent = struct.unpack("d", recvPacket[28:28 + bytes])[0]
                     tracelist1.append(" %d   %.0f ms %s %s" % (ttl,(timeReceived -timeSent)*1000, addr[0], recvaddr))
@@ -179,7 +175,7 @@ def get_route(hostname):
                     #Fill in end
                 else:
                     #Fill in start
-                    print("err")
+                    print("error")
                     #herror
                     #If there is an exception/error to your if statements, you should append that to your list here
                     #Fill in end
