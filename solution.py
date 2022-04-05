@@ -54,8 +54,8 @@ def build_packet():
     # Make the header in a similar way to the ping exercise.
     # Append checksum to the header.
     data = struct.pack("d",time.time())
-    myChecksum = checksum(str(header+data))
-    header = stricy.pack("bbHHh",ICMP_ECHO_REQUEST,req_code,myChecksum, id, seq)
+    myChecksum = checksum(header+data)
+    header = struct.pack("bbHHh",ICMP_ECHO_REQUEST,req_code,myChecksum, id, seq)
     # Don’t send the packet yet , just return the final packet in this function.
     #Fill in end
 
@@ -108,7 +108,7 @@ def get_route(hostname):
                 #Fill in start
                 #Fetch the icmp type from the IP packet
                 icmpHeader = recvPacket[20:28]
-                req_type, code, checksum, id, seq = struct.unpack("bbHHh",icmpHeader)
+                types, code, checksum, id, seq = struct.unpack("bbHHh",icmpHeader)
                 #Fill in end
                 try: #try to fetch the hostname
                     #Fill in start
