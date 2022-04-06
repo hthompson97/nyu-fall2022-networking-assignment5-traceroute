@@ -97,7 +97,10 @@ def get_route(hostname):
                 whatReady = select.select([mySocket], [], [], timeLeft)
                 howLongInSelect = (time.time() - startedSelect)
                 if whatReady[0] == []: # Timeout
-                    tracelist1.append("* * * Request timed out.")
+                    tracelist1.append("  %d    *    Request timed out"%(ttl))
+                    ############################################TO REMOVE############################################
+                    print("  %d    *    Request timed out"%(ttl))
+                    ############################################TO REMOVE############################################
                     #Fill in start
                     #You should add the list above to your all traces list
                     tracelist2.append(tracelist1)
@@ -107,7 +110,11 @@ def get_route(hostname):
                 timeReceived = time.time()
                 timeLeft = timeLeft - howLongInSelect
                 if timeLeft <= 0:
-                    tracelist1.append("* * * Request timed out.")
+                    tracelist1.append("  %d    *    Request timed out"%(ttl))
+                    ############################################TO REMOVE############################################
+                    print("  %d    *    Request timed out"%(ttl))
+                    ############################################TO REMOVE############################################
+
                     #Fill in start
                     #You should add the list above to your all traces list
                     tracelist2.append(tracelist1)
@@ -138,11 +145,9 @@ def get_route(hostname):
                     ############################################TO REMOVE############################################
 
 
-                    tracelist1.append("  %d    rtt=%.0f ms    %s %s" %(ttl, (timeReceived -t)*1000, addr[0], "hostname not returnable"))
-                    #“hostname not returnable”.
-                    #return here?
+                    tracelist1.append("  %d    %.0f ms    %s %s" %(ttl, (timeReceived -t)*1000, addr[0], "hostname not returnable")) #“hostname not returnable”.
                     tracelist2.append(tracelist1)
-                    return tracelist2
+                    continue
                     #Fill in end
 
                 if types == 11: #time exceeded
@@ -156,6 +161,7 @@ def get_route(hostname):
                     ############################################TO REMOVE############################################
 
                     tracelist1.append("  %d    %.0f ms    %s %s" %(ttl, (timeReceived -t)*1000, addr[0], recvaddr))
+                    tracelist2.append(tracelist1)
                     #Fill in end
                 elif types == 3:#unreachable
                     bytes = struct.calcsize("d")
@@ -163,7 +169,7 @@ def get_route(hostname):
                     #Fill in start
                     #You should add your responses to your lists here
                     tracelist1.append(" %d   %.0f ms %s %s" % (ttl,(timeReceived -t)*1000, addr[0], recvaddr))
-
+                    tracelist2.append(tracelist1)
                     ############################################TO REMOVE############################################
                     print("  %d    %.0f ms    %s %s" %(ttl, (timeReceived -t)*1000, addr[0], recvaddr))
                     ############################################TO REMOVE############################################
@@ -172,7 +178,7 @@ def get_route(hostname):
                 elif types == 0: #echo reply
                     bytes = struct.calcsize("d")
                     timeSent = struct.unpack("d", recvPacket[28:28 + bytes])[0]
-                    tracelist1.append(" %d   %.0f ms %s %s" % (ttl,(timeReceived -timeSent)*1000, addr[0], recvaddr))
+                    tracelist1.append("  %d    %.0f ms    %s %s" % (ttl,(timeReceived -timeSent)*1000, addr[0], recvaddr))
 
                     #Fill in start
 
@@ -195,6 +201,7 @@ def get_route(hostname):
                 mySocket.close()
 
 if __name__ == '__main__':
-    get_route("gmail.com")
-    #get_route("www.google.com")
-    #get_route("google.co.il")
+    ret = get_route("www.google.com")
+    #ret = get_route("google.co.il")
+    for i in ret:
+        print(i)
