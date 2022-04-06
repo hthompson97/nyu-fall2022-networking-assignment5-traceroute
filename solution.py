@@ -97,7 +97,8 @@ def get_route(hostname):
                 whatReady = select.select([mySocket], [], [], timeLeft)
                 howLongInSelect = (time.time() - startedSelect)
                 if whatReady[0] == []: # Timeout
-                    tracelist1.append("  %d    *    Request timed out"%(ttl))
+                    #tracelist1.append("  %d    *    Request timed out"%(ttl))
+                    tracelist1 = [ttl,"*","Request timed out"]
                     ############################################TO REMOVE############################################
                     print("  %d    *    Request timed out"%(ttl))
                     ############################################TO REMOVE############################################
@@ -110,7 +111,8 @@ def get_route(hostname):
                 timeReceived = time.time()
                 timeLeft = timeLeft - howLongInSelect
                 if timeLeft <= 0:
-                    tracelist1.append("  %d    *    Request timed out"%(ttl))
+                    #tracelist1.append("  %d    *    Request timed out"%(ttl))
+                    tracelist1 = [ttl,"*","Request timed out"]
                     ############################################TO REMOVE############################################
                     print("  %d    *    Request timed out"%(ttl))
                     ############################################TO REMOVE############################################
@@ -145,7 +147,9 @@ def get_route(hostname):
                     ############################################TO REMOVE############################################
 
 
-                    tracelist1.append("  %d    %.0f ms    %s %s" %(ttl, (timeReceived -t)*1000, addr[0], "hostname not returnable")) #“hostname not returnable”.
+                    #tracelist1.append("  %d    %.0f ms    %s %s" %(ttl, (timeReceived -t)*1000, addr[0], "hostname not returnable")) #“hostname not returnable”.
+                    time_formatted = "%.0fms"%((timeReceived -t)*1000)
+                    tracelist1 = [ttl,time_formatted,"hostname not returnable"]
                     tracelist2.append(tracelist1)
                     continue
                     #Fill in end
@@ -160,7 +164,9 @@ def get_route(hostname):
                     print("  %d    %.0f ms    %s %s" %(ttl, (timeReceived -t)*1000, addr[0], recvaddr))
                     ############################################TO REMOVE############################################
 
-                    tracelist1.append("  %d    %.0f ms    %s %s" %(ttl, (timeReceived -t)*1000, addr[0], recvaddr))
+                    #tracelist1.append("  %d    %.0f ms    %s %s" %(ttl, (timeReceived -t)*1000, addr[0], recvaddr))
+                    time_formatted = "%.0fms"%((timeReceived -t)*1000)
+                    tracelist1 = [ttl,time_formatted, addr[0], recvaddr]
                     tracelist2.append(tracelist1)
                     #Fill in end
                 elif types == 3:#unreachable
@@ -168,7 +174,9 @@ def get_route(hostname):
                     timeSent = struct.unpack("d", recvPacket[28:28 + bytes])[0]
                     #Fill in start
                     #You should add your responses to your lists here
-                    tracelist1.append(" %d   %.0f ms %s %s" % (ttl,(timeReceived -t)*1000, addr[0], recvaddr))
+                    #tracelist1.append(" %d   %.0f ms %s %s" % (ttl,(timeReceived -t)*1000, addr[0], recvaddr))
+                    time_formatted = "%.0fms"%((timeReceived -t)*1000)
+                    tracelist1 = [ttl,time_formatted, addr[0], recvaddr]
                     tracelist2.append(tracelist1)
                     ############################################TO REMOVE############################################
                     print("  %d    %.0f ms    %s %s" %(ttl, (timeReceived -t)*1000, addr[0], recvaddr))
@@ -178,7 +186,9 @@ def get_route(hostname):
                 elif types == 0: #echo reply
                     bytes = struct.calcsize("d")
                     timeSent = struct.unpack("d", recvPacket[28:28 + bytes])[0]
-                    tracelist1.append("  %d    %.0f ms    %s %s" % (ttl,(timeReceived -timeSent)*1000, addr[0], recvaddr))
+                    time_formatted = "%.0fms"%((timeReceived -t)*1000)
+                    tracelist1 = [ttl,time_formatted, addr[0], recvaddr]
+                    #tracelist1.append("  %d    %.0f ms    %s %s" % (ttl,(timeReceived -timeSent)*1000, addr[0], recvaddr))
 
                     #Fill in start
 
@@ -201,7 +211,10 @@ def get_route(hostname):
                 mySocket.close()
 
 if __name__ == '__main__':
-    ret = get_route("www.google.com")
+    #ret = get_route("127.0.0.1")
+    ret = get_route("be-31441-cs04.ashburn.va.ibone.comcast.net")
     #ret = get_route("google.co.il")
+    #ret = get_route("www.google.com")
+
     for i in ret:
         print(i)
